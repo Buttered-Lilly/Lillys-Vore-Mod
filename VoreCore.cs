@@ -90,6 +90,8 @@ namespace Lilly_s_Vore_Mod
                     }
                     else if (Parts[0].StartsWith("/vore"))
                     {
+                        if (Parts.Length < 2)
+                            return false;
                         bool pass = VoreInstance.sendVoreRequest(Parts);
 
                         if (pass)
@@ -183,13 +185,22 @@ namespace Lilly_s_Vore_Mod
 
         public bool sendVoreRequest(string[] parts)
         {
+            string name = parts[1];
+            if(parts.Length > 2)
+            {
+                for (int i = 2; i < parts.Length; i++)
+                {
+                    name += " " + parts[i];
+                }
+            }
+            Logger(name);
             VoreInstance.voreAble.RemoveAll(Player => Player == null);
             foreach (Player player in voreAble)
             {
                 string nick = player._nickname;
                 nick = Regex.Replace(nick, "<.*?>", "");
 
-                if (nick == parts[1])
+                if (nick == name)
                 {
                     sendSteamChat($"{player._nickname},VoreRequest");
                     return true;

@@ -18,10 +18,8 @@ namespace Lilly_s_Vore_Mod
         {
             general = MelonPreferences.CreateCategory("General");
             autoAccept = general.CreateEntry<bool>("AutoAccept", false, "AutoAccept", "Auto Accept Vore Requests");
-            logger("1");
             if (VoreCore.VoreInstance != null)
                 return;
-            logger("1");
 
             GameObject g = GameObject.Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube));
             g.name = "VoreCore";
