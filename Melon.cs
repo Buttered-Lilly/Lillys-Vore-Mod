@@ -11,6 +11,7 @@ namespace Lilly_s_Vore_Mod
     {
         private MelonPreferences_Category general;
         private MelonPreferences_Entry<bool> autoAccept;
+        private MelonPreferences_Entry<bool> VoreLock;
 
         VoreCore vorecore;
 
@@ -18,6 +19,7 @@ namespace Lilly_s_Vore_Mod
         {
             general = MelonPreferences.CreateCategory("General");
             autoAccept = general.CreateEntry<bool>("AutoAccept", false, "AutoAccept", "Auto Accept Vore Requests");
+            VoreLock = general.CreateEntry<bool>("VoreLock", false, "VoreLock", "Toggle Vore Lock");
             if (VoreCore.VoreInstance != null)
                 return;
 
@@ -29,6 +31,7 @@ namespace Lilly_s_Vore_Mod
             vorecore.saveConfig = saveSettings;
 
             vorecore.autoAccept = autoAccept.Value;
+            vorecore.VoreLock = VoreLock.Value;
         }
 
         public bool saveSettings(string _)
@@ -36,6 +39,7 @@ namespace Lilly_s_Vore_Mod
             try
             {
                 autoAccept.Value = vorecore.autoAccept;
+                VoreLock.Value = vorecore.VoreLock;
 
                 MelonPreferences.Save();
                 return true;

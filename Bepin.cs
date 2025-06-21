@@ -8,11 +8,13 @@ namespace Lilly_s_Vore_Mod
     internal class Bepin : BaseUnityPlugin
     {
         private ConfigEntry<bool> autoAccept;
+        private ConfigEntry<bool> VoreLock;
 
         VoreCore vorecore;
         public void Awake()
         {
             autoAccept = Config.Bind("General", "AutoAccept", false,  "Auto Accept Vore Requests");
+            VoreLock = Config.Bind("General", "VoreLock", false,  "Toggles Vore Lock");
 
             if (VoreCore.VoreInstance != null)
                 return;
@@ -26,12 +28,14 @@ namespace Lilly_s_Vore_Mod
             harmony.PatchAll();
 
             vorecore.autoAccept = autoAccept.Value;
+            vorecore.VoreLock = VoreLock.Value;
         }
         public bool saveSettings(string _)
         {
             try
             {
                 autoAccept.Value = vorecore.autoAccept;
+                VoreLock.Value = vorecore.VoreLock;
 
                 Config.Save();
                 return true;

@@ -110,6 +110,7 @@ namespace Lilly_s_Vore_Mod
                     {
                         VoreInstance.autoAccept = !VoreInstance.autoAccept;
                         __instance.New_ChatMessage($"Auto Accpet Vore: {VoreInstance.autoAccept}");
+                        VoreInstance.saveConfig("");
 
                         return false;
                     }
@@ -195,9 +196,9 @@ namespace Lilly_s_Vore_Mod
                         {
                             VoreInstance.VoreLock = !VoreInstance.VoreLock;
                             __instance.New_ChatMessage($"Vore Lock: {VoreInstance.VoreLock}");
+                            VoreInstance.saveConfig("");
+                            return false;
                         }
-
-                        return false;
                     }
                 }
                 catch (Exception e)
