@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lilly_s_Vore_Mod
 {
-    [BepInPlugin("d3acf21a-a810-4be1-898a-4bb338e62b9f", "Lilly's Vore Mod", "1.0.0")]
+    [BepInPlugin("d3acf21a-a810-4be1-898a-4bb338e62b9f", "Lilly's Vore Mod", "1.0.1")]
     internal class Bepin : BaseUnityPlugin
     {
         private ConfigEntry<bool> autoAccept;

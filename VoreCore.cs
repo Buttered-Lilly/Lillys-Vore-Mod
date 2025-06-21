@@ -13,6 +13,7 @@ namespace Lilly_s_Vore_Mod
 
         public bool autoAccept = false;
         public bool Vored = false;
+        public bool VoreLock = false;
 
         public Func<string, bool> Logger;
         public Func<string, bool> saveConfig;
@@ -77,18 +78,18 @@ namespace Lilly_s_Vore_Mod
                 {
                     string temp;
                     temp = _message;
-                    Regex.Replace(temp, "<.*?>", "");
+                    temp = Regex.Replace(temp, "<.*?>", "");
                     //Beyondinstance.Logger(temp);
                     string[] Parts;
                     Parts = temp.Split(" ");
                     Parts[0] = Parts[0].ToLower();
-                    if (Parts[0].StartsWith("/vorehelp"))
+                    if (Parts[0] == "/vorehelp")
                     {
-                        __instance.New_ChatMessage("Commands:\n\nSends Vore Request To Player, Name Is Case Sensitive\n/Vore [Player Name]\n\nAccepts Vore Request\n/AcceptVore\n\nDenys Vore Request\n/DenyVore\n\nExits Vored State\n/UnVore\n\nToggles Auto Accepting Vore Requests\n/AutoAccept\n\nLists Players That Can Be Vored\n/Vorable");
+                        __instance.New_ChatMessage("Commands:\n\nSends Vore Request To Player, Name Is Case Sensitive\n/Vore [Player Name]\n\nAccepts Vore Request\n/AcceptVore\n\nDenys Vore Request\n/DenyVore\n\nExits Vored State If Vore Lock Is Off\n/UnVore\n\nEjects Vored Player, Player Name Is Case Sensitive\n/UnVore [Player Name]\n\nToggles Auto Accepting Vore Requests\n/AutoAccept\n\nLists Players That Can Be Vored\n/Vorable\n\nKeeps You Vored Till Let Out\n/VoreLock");
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/vore"))
+                    else if (Parts[0] == "/vore")
                     {
                         if (Parts.Length < 2)
                             return false;
@@ -105,14 +106,14 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/autoaccept"))
+                    else if (temp == "/autoaccept")
                     {
                         VoreInstance.autoAccept = !VoreInstance.autoAccept;
                         __instance.New_ChatMessage($"Auto Accpet Vore: {VoreInstance.autoAccept}");
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/acceptvore"))
+                    else if (temp == "/acceptvore")
                     {
                         if (VoreInstance.currentRequest == null)
                         {
@@ -133,7 +134,7 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/denyvore"))
+                    else if (temp == "/denyvore")
                     {
                         if (VoreInstance.currentRequest == null)
                         {
@@ -147,11 +148,15 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/unvore"))
+                    else if (temp == "/unvore")
                     {
                         if (!VoreInstance.Vored)
                         {
                             __instance.New_ChatMessage("Not Currently Vored");
+                        }
+                        else if (VoreInstance.VoreLock)
+                        {
+                            __instance.New_ChatMessage("Can't Escape");
                         }
                         else
                         {
@@ -160,7 +165,13 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (Parts[0].StartsWith("/vorable"))
+                    else if (Parts[0] == "/unvore")
+                    {
+                        VoreInstance.unvore(Parts);
+
+                        return false;
+                    }
+                    else if (Parts[0] == "/vorable")
                     {
                         VoreInstance.voreAble.RemoveAll(Player => Player == null);
                         __instance.New_ChatMessage("Vorable:");
@@ -173,6 +184,21 @@ namespace Lilly_s_Vore_Mod
                         }
                         return false;
                     }
+                    else if (Parts[0] == "/vorelock")
+                    {
+                        if(VoreInstance.VoreLock && VoreInstance.Vored)
+                        {
+                            __instance.New_ChatMessage($"Don't Think You Can Get Out That Easily Now");
+                            return false;
+                        }
+                        else
+                        {
+                            VoreInstance.VoreLock = !VoreInstance.VoreLock;
+                            __instance.New_ChatMessage($"Vore Lock: {VoreInstance.VoreLock}");
+                        }
+
+                        return false;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -181,6 +207,31 @@ namespace Lilly_s_Vore_Mod
                 }
                 return true;
             }
+        }
+
+        public bool unvore(string[] parts)
+        {
+            string name = parts[1];
+            if (parts.Length > 2)
+            {
+                for (int i = 2; i < parts.Length; i++)
+                {
+                    name += " " + parts[i];
+                }
+            }
+            VoreInstance.voreAble.RemoveAll(Player => Player == null);
+            foreach (Player player in voreAble)
+            {
+                string nick = player._nickname;
+                nick = Regex.Replace(nick, "<.*?>", "");
+
+                if (nick == name)
+                {
+                    sendSteamChat($"{player._nickname},Unvore");
+                    return true;
+                }
+            }
+            return false;
         }
 
         public bool sendVoreRequest(string[] parts)
@@ -193,7 +244,6 @@ namespace Lilly_s_Vore_Mod
                     name += " " + parts[i];
                 }
             }
-            Logger(name);
             VoreInstance.voreAble.RemoveAll(Player => Player == null);
             foreach (Player player in voreAble)
             {
@@ -415,6 +465,27 @@ namespace Lilly_s_Vore_Mod
                             {
                                 acceptVore();
                                 ChatBehaviour._current.New_ChatMessage($"You've Been Vored By {player._nickname}");
+                            }
+                        }
+                    }
+                }
+                else if(message.Contains("Unvore"))
+                {
+                    string name = Regex.Replace(message.Split(",")[0], "<.*?>", "");
+                    string nick = Regex.Replace(localPlayer._nickname, "<.*?>", "");
+
+                    if (nick == name)
+                    {
+                        Player player = findPlayer((CSteamID)callback.m_ulSteamIDUser);
+                        if (player == null)
+                            return;
+                        else
+                        {
+                            if (Vored)
+                            {
+                                exitVore();
+                                ChatBehaviour._current.New_ChatMessage($"You've Been Unvored");
+                                return;
                             }
                         }
                     }
