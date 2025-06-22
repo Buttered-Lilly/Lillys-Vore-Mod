@@ -83,16 +83,14 @@ namespace Lilly_s_Vore_Mod
                     string[] Parts;
                     Parts = temp.Split(" ");
                     Parts[0] = Parts[0].ToLower();
-                    if (Parts[0] == "/vorehelp")
-                    {
-                        __instance.New_ChatMessage("Commands:\n\nSends Vore Request To Player, Name Is Case Sensitive\n/Vore [Player Name]\n\nAccepts Vore Request\n/AcceptVore\n\nDenys Vore Request\n/DenyVore\n\nExits Vored State If Vore Lock Is Off\n/UnVore\n\nEjects Vored Player, Player Name Is Case Sensitive\n/UnVore [Player Name]\n\nToggles Auto Accepting Vore Requests\n/AutoAccept\n\nLists Players That Can Be Vored\n/Vorable\n\nKeeps You Vored Till Let Out\n/VoreLock");
-
-                        return false;
-                    }
-                    else if (Parts[0] == "/vore")
+                    temp = temp.ToLower();
+                    if (Parts[0] == "/vore")
                     {
                         if (Parts.Length < 2)
+                        {
+                            __instance.New_ChatMessage("No name Given");
                             return false;
+                        }
                         bool pass = VoreInstance.sendVoreRequest(Parts);
 
                         if (pass)
@@ -103,6 +101,12 @@ namespace Lilly_s_Vore_Mod
                         {
                             __instance.New_ChatMessage("Vore Request Failed");
                         }
+
+                        return false;
+                    }
+                    else if (temp == "/vorehelp")
+                    {
+                        __instance.New_ChatMessage("Commands:\n\nSends Vore Request To Player, Name Is Case Sensitive\n/Vore [Player Name]\n\nAccepts Vore Request\n/AcceptVore\n\nDenys Vore Request\n/DenyVore\n\nExits Vored State If Vore Lock Is Off\n/UnVore\n\nEjects Vored Player, Player Name Is Case Sensitive\n/UnVore [Player Name]\n\nToggles Auto Accepting Vore Requests\n/AutoAccept\n\nLists Players That Can Be Vored\n/Vorable\n\nKeeps You Vored Till Let Out\n/VoreLock");
 
                         return false;
                     }
@@ -166,13 +170,7 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (Parts[0] == "/unvore")
-                    {
-                        VoreInstance.unvore(Parts);
-
-                        return false;
-                    }
-                    else if (Parts[0] == "/vorable")
+                    else if (temp == "/vorable")
                     {
                         VoreInstance.voreAble.RemoveAll(Player => Player == null);
                         __instance.New_ChatMessage("Vorable:");
@@ -185,7 +183,7 @@ namespace Lilly_s_Vore_Mod
                         }
                         return false;
                     }
-                    else if (Parts[0] == "/vorelock")
+                    else if (temp == "/vorelock")
                     {
                         if(VoreInstance.VoreLock && VoreInstance.Vored)
                         {

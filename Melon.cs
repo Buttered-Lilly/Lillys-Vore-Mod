@@ -1,7 +1,7 @@
 ﻿using MelonLoader;
 using UnityEngine;
 
-[assembly: MelonInfo(typeof(Lilly_s_Vore_Mod.MelonLoad), "Lilly's Vore Mod", "1.0.1", "ButteredLilly", null)]
+[assembly: MelonInfo(typeof(Lilly_s_Vore_Mod.MelonLoad), "Lilly's Vore Mod", "1.0.4", "ButteredLilly", null)]
 [assembly: MelonGame("KisSoft", "ATLYSS")]
 [assembly: MelonOptionalDependencies("BepInEx")]
 
