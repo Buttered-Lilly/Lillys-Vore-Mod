@@ -153,9 +153,13 @@ namespace Lilly_s_Vore_Mod
 
                         return false;
                     }
-                    else if (temp == "/unvore")
+                    else if (Parts[0] == "/unvore")
                     {
-                        if (!VoreInstance.Vored)
+                        if(Parts.Length > 1)
+                        {
+                            VoreInstance.unvore(Parts);
+                        }
+                        else if (!VoreInstance.Vored)
                         {
                             __instance.New_ChatMessage("Not Currently Vored");
                         }
